@@ -1,30 +1,23 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Image, ScrollView, Alert } from 'react-native';
-import * as ImagePicker from 'react-native-image-picker';
 
 const UploadDharmshala = () => {
   const [dharmshalaName, setDharmshalaName] = useState('');
   const [location, setLocation] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [ownerContact, setOwnerContact] = useState('');
-  const [imageUri, setImageUri] = useState(null);
+  const [image, setImage] = useState(null);
 
-  const pickImage = () => {
-    ImagePicker.launchImageLibrary(
-      { mediaType: 'photo', quality: 1 },
-      (response) => {
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        } else if (response.assets && response.assets.length > 0) {
-          setImageUri(response.assets[0].uri);
-        }
-      }
-    );
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(URL.createObjectURL(file));
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     if (!dharmshalaName || !location || !ownerName || !ownerContact) {
-      Alert.alert('Error', 'Please fill all fields');
+      alert('Please fill all fields');
       return;
     }
 
@@ -34,62 +27,84 @@ const UploadDharmshala = () => {
       location,
       ownerName,
       ownerContact,
-      imageUri
+      image,
     });
 
-    Alert.alert('Success', 'Dharmshala Uploaded Successfully');
+    alert('Dharmshala Uploaded Successfully');
+
     // Clear the form
     setDharmshalaName('');
     setLocation('');
     setOwnerName('');
     setOwnerContact('');
-    setImageUri(null);
+    setImage(null);
   };
 
   return (
-    <ScrollView contentContainerStyle={{ padding: 20 }}>
-      <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Upload Dharmshala</Text>
+    <div style={{ maxWidth: '600px', margin: 'auto', padding: '20px' }}>
+      <h2 style={{ marginBottom: '20px' }}>Upload Dharmshala</h2>
 
-      <Text>Dharmshala Name</Text>
-      <TextInput
-        value={dharmshalaName}
-        onChangeText={setDharmshalaName}
-        placeholder="Enter name"
-        style={{ borderBottomWidth: 1, marginBottom: 15 }}
-      />
+      <form onSubmit={handleSubmit}>
+        <div style={{ marginBottom: '15px' }}>
+          <label>Dharmshala Name</label><br />
+          <input
+            type="text"
+            value={dharmshalaName}
+            onChange={(e) => setDharmshalaName(e.target.value)}
+            placeholder="Enter name"
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
 
-      <Text>Location</Text>
-      <TextInput
-        value={location}
-        onChangeText={setLocation}
-        placeholder="Enter location"
-        style={{ borderBottomWidth: 1, marginBottom: 15 }}
-      />
+        <div style={{ marginBottom: '15px' }}>
+          <label>Location</label><br />
+          <input
+            type="text"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Enter location"
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
 
-      <Text>Owner Name</Text>
-      <TextInput
-        value={ownerName}
-        onChangeText={setOwnerName}
-        placeholder="Enter owner name"
-        style={{ borderBottomWidth: 1, marginBottom: 15 }}
-      />
+        <div style={{ marginBottom: '15px' }}>
+          <label>Owner Name</label><br />
+          <input
+            type="text"
+            value={ownerName}
+            onChange={(e) => setOwnerName(e.target.value)}
+            placeholder="Enter owner name"
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
 
-      <Text>Owner Contact</Text>
-      <TextInput
-        value={ownerContact}
-        onChangeText={setOwnerContact}
-        placeholder="Enter contact number"
-        keyboardType="phone-pad"
-        style={{ borderBottomWidth: 1, marginBottom: 15 }}
-      />
+        <div style={{ marginBottom: '15px' }}>
+          <label>Owner Contact</label><br />
+          <input
+            type="tel"
+            value={ownerContact}
+            onChange={(e) => setOwnerContact(e.target.value)}
+            placeholder="Enter contact number"
+            style={{ width: '100%', padding: '8px' }}
+          />
+        </div>
 
-      <Button title="Pick Image" onPress={pickImage} />
-      {imageUri && (
-        <Image source={{ uri: imageUri }} style={{ width: '100%', height: 200, marginVertical: 15 }} />
-      )}
+        <div style={{ marginBottom: '15px' }}>
+          <label>Upload Image</label><br />
+          <input type="file" accept="image/*" onChange={handleImageChange} />
+        </div>
 
-      <Button title="Submit" onPress={handleSubmit} color="#4CAF50" />
-    </ScrollView>
+        {image && (
+          <div style={{ marginBottom: '15px' }}>
+            <img src={image} alt="Dharmshala Preview" style={{ width: '100%', height: 'auto' }} />
+          </div>
+        )}
+
+        <button type="submit" style={{ padding: '10px 20px', background: '#4CAF50', color: '#fff', border: 'none', cursor: 'pointer' }}>
+          Submit
+        </button>
+      </form>
+    </div>
   );
 };
 
