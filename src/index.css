@@ -1,3 +1,11 @@
+@import "tailwindcss";
+
+.bg-dark {
+  background-color: #3f3f3f;
+}
+.bg-primary {
+  background-color: #f75c1e;
+}
 .modal-overlay {
   position: fixed;
   top: 0;
