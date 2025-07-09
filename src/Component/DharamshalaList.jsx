@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Calendar, MapPin, User, Phone, X, Clock, CheckCircle } from "lucide-react";
 
-
 const dharamshalaData = [
     {
         id: 1,
@@ -10,9 +9,8 @@ const dharamshalaData = [
         location: "गोपालेशवर महादेव मंदिर",
         owner: "viraj patwari",
         contact: "+9111399904",
-        availableDates: ["2025-05-25", "2025-05-28", "2025-05-30", "2025-06-02"],
-        bookedDates: ["2025-05-26", "2025-05-27", "2025-05-29", "2025-06-01"],
-        
+        availableDates: ["all date"],
+        bookedDates: ["2026-02-21","2026-02-22","2026-02-23","2026-02-24","2026-02-25","2026-02-26","2026-02-27","2026-02-28"],
     },
     {
         id: 2,
@@ -23,7 +21,6 @@ const dharamshalaData = [
         contact: "+91-9999999992",
         availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
         bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-        
     },
     {
         id: 3,
@@ -34,7 +31,6 @@ const dharamshalaData = [
         contact: "+91-9999999993",
         availableDates: ["2025-06-05", "2025-06-10", "2025-06-12"],
         bookedDates: ["2025-06-06", "2025-06-07", "2025-06-11"],
-        
     },
     {
         id: 4,
@@ -45,7 +41,6 @@ const dharamshalaData = [
         contact: "+91-9999999994",
         availableDates: ["2025-06-15", "2025-06-18", "2025-06-20"],
         bookedDates: ["2025-06-16", "2025-06-17", "2025-06-19"],
-        
     },
     {
         id: 5,
@@ -56,17 +51,16 @@ const dharamshalaData = [
         contact: "+91-9999999995",
         availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
         bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-        
-    },{
+    },
+    {
         id: 6,
         name: "श्री राम वाटिका",
         image: "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        location: "श्री राम दरबार  ",
+        location: "श्री राम दरबार",
         owner: "viraj patwari",
         contact: "+91-9999999991",
         availableDates: ["2025-05-25", "2025-05-28", "2025-05-30", "2025-06-02"],
         bookedDates: ["2025-05-26", "2025-05-27", "2025-05-29", "2025-06-01"],
-        
     },
     {
         id: 7,
@@ -77,18 +71,16 @@ const dharamshalaData = [
         contact: "+91-9999999992",
         availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
         bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-
     },
     {
         id: 8,
-        name: "पांचाल धर्मशाला ",
+        name: "पांचाल धर्मशाला",
         image: "https://plus.unsplash.com/premium_photo-1675745329378-5573c360f69f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8SG90ZWxzfGVufDB8fDB8fHww",
         location: "मुंडी रोड",
         owner: "Vishnu Prasad",
         contact: "+91-9999999993",
         availableDates: ["2025-06-05", "2025-06-10", "2025-06-12"],
         bookedDates: ["2025-06-06", "2025-06-07", "2025-06-11"],
-       
     },
     {
         id: 9,
@@ -99,7 +91,6 @@ const dharamshalaData = [
         contact: "+91-9999999994",
         availableDates: ["2025-06-15", "2025-06-18", "2025-06-20"],
         bookedDates: ["2025-06-16", "2025-06-17", "2025-06-19"],
-        
     },
     {
         id: 10,
@@ -110,7 +101,6 @@ const dharamshalaData = [
         contact: "+91-9999999995",
         availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
         bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-       
     }
 ];
 
@@ -126,7 +116,6 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
     const getFirstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     const formatDateString = (year, month, day) =>
         `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-    const isDateAvailable = (dateStr) => availableDates.includes(dateStr);
     const isDateBooked = (dateStr) => bookedDates.includes(dateStr);
     const isDateSelected = (dateStr) => selected && selected.toISOString().split('T')[0] === dateStr;
 
@@ -141,20 +130,17 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
 
         for (let day = 1; day <= daysInMonth; day++) {
             const dateStr = formatDateString(currentMonth.getFullYear(), currentMonth.getMonth(), day);
-            const available = isDateAvailable(dateStr);
             const booked = isDateBooked(dateStr);
             const selectedDay = isDateSelected(dateStr);
 
             let className = "p-2 text-center cursor-pointer rounded-lg transition-all duration-200 ";
 
             if (selectedDay) {
-                className += "bg-blue-500 text-white font-bold";
-            } else if (available) {
-                className += "bg-green-100 text-green-800 hover:bg-green-200 font-medium";
+                className += "bg-blue-600 text-white font-bold";
             } else if (booked) {
-                className += "bg-red-100 text-red-800 cursor-not-allowed";
+                className += "bg-red-600 text-white cursor-not-allowed font-medium";
             } else {
-                className += "text-gray-400 cursor-not-allowed";
+                className += "bg-green-600 text-white hover:bg-green-700 font-medium";
             }
 
             days.push(
@@ -162,7 +148,7 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
                     key={day}
                     className={className}
                     onClick={() => {
-                        if (available) {
+                        if (!booked) {
                             const newDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
                             onDateSelect(newDate);
                         }
@@ -210,7 +196,7 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
                             setCurrentMonth(new Date(parseInt(e.target.value), currentMonth.getMonth()))
                         }
                     >
-                        {Array.from({ length: 11 }, (_, i) => 2020 + i).map((year) => (
+                        {Array.from({ length: 81 }, (_, i) => 2020 + i).map((year) => (
                             <option key={year} value={year}>{year}</option>
                         ))}
                     </select>
@@ -239,15 +225,15 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
             {/* Legend */}
             <div className="flex justify-between text-sm">
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-green-100 rounded"></div>
+                    <div className="w-3 h-3 bg-green-600 rounded"></div>
                     <span>Available</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-red-100 rounded"></div>
+                    <div className="w-3 h-3 bg-red-600 rounded"></div>
                     <span>Booked</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-500 rounded"></div>
+                    <div className="w-3 h-3 bg-blue-600 rounded"></div>
                     <span>Selected</span>
                 </div>
             </div>
@@ -350,19 +336,19 @@ const DharamshalaList = () => {
                                             <span className="text-lg">{selected.contact}</span>
                                         </div>
                                     </div>
-<div className="bg-gradient-to-r from-orange-100 to-yellow-100 p-4 rounded-lg mb-6 text-gray-800">
-    <h3 className="text-xl font-bold text-orange-700 mb-2">धर्मशाला के नियम</h3>
-    <ul className="list-disc pl-5 space-y-1 text-sm">
-        <li>धर्मशाला की बुकिंग के समय ही पूरी राशि जमा होगी।</li>
-        <li>धर्मशाला की सफाई न्यूनतम के 200 ₹ जमा करना है।</li>
-        <li>बिजली बिल के ₹1000 जमा करना है।</li>
-        <li>अतिरिक्त बिजली व्यवस्था स्वयं के व्यय व साधन से करना होगी।</li>
-        <li>धर्मशाला में उपलब्ध बर्तन व अन्य सामग्री - गिन कर लें व ठीक कर जमा करायें।</li>
-        <li>बर्तन व सामग्री हेतु ₹1000 एडवांस जमा करावें - बर्तन व सामग्री पूरी होने पर राशि वापस होगी - बर्तन आदि गुम होने/क्षतिग्रस्त/अतिरिक्त किराया लगेगा। यह धर्मशाला समिति की सम्पत्ति है।</li>
-        <li>इसे स्वच्छ व सुन्दर बनाये रखें।</li>
-    </ul>
-</div>
 
+                                    <div className="bg-gradient-to-r from-orange-200 to-yellow-100 p-4 rounded-lg mb-6 text-gray-800">
+                                        <h3 className="text-xl font-bold text-orange-700 mb-2 text-center">!! धर्मशाला के नियम !!</h3>
+                                        <ul className="list-disc pl-5 space-y-1 text-sm">
+                                            <li>धर्मशाला की बुकिंग के समय ही पूरी राशि जमा होगी।</li>
+                                            <li>धर्मशाला की सफाई न्यूनतम के 200 ₹ जमा करना है।</li>
+                                            <li>बिजली बिल के ₹1000 जमा करना है।</li>
+                                            <li>अतिरिक्त बिजली व्यवस्था स्वयं के व्यय व साधन से करना होगी।</li>
+                                            <li>धर्मशाला में उपलब्ध बर्तन व अन्य सामग्री - गिन कर लें व ठीक कर जमा करायें।</li>
+                                            <li>बर्तन व सामग्री हेतु ₹1000 एडवांस जमा करावें - बर्तन व सामग्री पूरी होने पर राशि वापस होगी - बर्तन आदि गुम होने/क्षतिग्रस्त/अतिरिक्त किराया लगेगा। यह धर्मशाला समिति की सम्पत्ति है।</li>
+                                            <li>इसे स्वच्छ व सुन्दर बनाये रखें।</li>
+                                        </ul>
+                                    </div>
                                 </div>
 
                                 <div>
