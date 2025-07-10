@@ -1,7 +1,7 @@
 import React from "react";
 // import Navbar from './Component/Navbar';
 import DharamshalaBooking from "./Component/DharamshalaList";
-import bookingadmin from  "./Component/bookingadmin";
+import AdminBookingPanel from "./Component/AdminBookingPanel";
 import LoginPage from "./Component/loginpage";
 import RegisterPage from "./Component/Registration";
 import UploadDharmshala from "./Component/UploadDharmshala";
@@ -14,6 +14,7 @@ import Admins from "./components/admin/Admins";
 const App = () => {
   return (
     <Routes>
+       <Route path="admins" element={<AdminBookingPanel /> } />
       <Route path="/" element={<DharamshalaBooking />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
@@ -22,7 +23,7 @@ const App = () => {
         <Route index element={<Dashboard />} />
         <Route path="dharamshala" element={<Dharamshala />} />
         <Route path="admins" element={<Admins />} />
-        <Route path="bookingadmin" element={<bookingadmin/>}/>
+       
       </Route>
     </Routes>
   );

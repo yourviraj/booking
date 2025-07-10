@@ -16,26 +16,107 @@ const DharamshalaManagement = () => {
   });
 
   // Sample dharamshala data
+  // Sample dharamshala data
   const [dharamshalas, setDharamshalas] = useState([
     {
       _id: '1',
-      name: 'Shanti Dharamshala',
-      location: 'Bijalpur, Indore',
-      contact: '+91-9876543210',
-      images: ['/api/placeholder/300/200'],
-      availableDates: ['2024-01-15', '2024-01-16', '2024-01-17'],
-      bookedDates: ['2024-01-10', '2024-01-11'],
+      name: 'चंद्रवंशी खाती धर्मशाला बिजलपुर',
+      location: 'गोपालेशवर महादेव मंदिर',
+      contact: '+91-9111399904',
+      images: ['https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
+      availableDates: ['all date'],
+      bookedDates: ['2026-02-21','2026-02-22','2026-02-23','2026-02-24','2026-02-25','2026-02-26','2026-02-27','2026-02-28'],
       createdAt: '2024-01-01'
     },
     {
       _id: '2',
-      name: 'Anand Dharamshala',
-      location: 'Main Road, Bijalpur',
-      contact: '+91-9876543211',
-      images: ['/api/placeholder/300/200'],
-      availableDates: ['2024-01-20', '2024-01-21'],
-      bookedDates: ['2024-01-12', '2024-01-13', '2024-01-14'],
+      name: 'चंद्रवंशी खाती धर्मशाला बिजलपुर',
+      location: 'neem chowke',
+      contact: '+91-9999999992',
+      images: ['https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww'],
+      availableDates: ['2025-06-01', '2025-06-03', '2025-06-05'],
+      bookedDates: ['2025-06-02', '2025-06-04', '2025-06-06'],
       createdAt: '2024-01-02'
+    },
+    {
+      _id: '3',
+      name: 'जैन धर्मशाला',
+      location: 'near jain mandir',
+      contact: '+91-9999999993',
+      images: ['https://plus.unsplash.com/premium_photo-1675745329378-5573c360f69f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8SG90ZWxzfGVufDB8fDB8fHww'],
+      availableDates: ['2025-06-05', '2025-06-10', '2025-06-12'],
+      bookedDates: ['2025-06-06', '2025-06-07', '2025-06-11'],
+      createdAt: '2024-01-03'
+    },
+    {
+      _id: '4',
+      name: 'रूपचितर धर्मशाला',
+      location: 'बिजलपुर वांडर्स बिजलपुर कब्बडी ग्राउंड',
+      contact: '+91-9999999994',
+      images: ['https://images.unsplash.com/photo-1590447158019-883d8d5f8bc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D'],
+      availableDates: ['2025-06-15', '2025-06-18', '2025-06-20'],
+      bookedDates: ['2025-06-16', '2025-06-17', '2025-06-19'],
+      createdAt: '2024-01-04'
+    },
+    {
+      _id: '5',
+      name: 'माली धर्मशाला',
+      location: 'भारत सागर पब्लिक स्कूल',
+      contact: '+91-9999999995',
+      images: ['https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D'],
+      availableDates: ['2025-06-20', '2025-06-22', '2025-06-25'],
+      bookedDates: ['2025-06-21', '2025-06-23', '2025-06-24'],
+      createdAt: '2024-01-05'
+    },
+    {
+      _id: '6',
+      name: 'श्री राम वाटिका',
+      location: 'श्री राम दरबार',
+      contact: '+91-9999999991',
+      images: ['https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'],
+      availableDates: ['2025-05-25', '2025-05-28', '2025-05-30', '2025-06-02'],
+      bookedDates: ['2025-05-26', '2025-05-27', '2025-05-29', '2025-06-01'],
+      createdAt: '2024-01-06'
+    },
+    {
+      _id: '7',
+      name: 'मिनी स्कूल गार्डन',
+      location: 'गुरुकुल आकाश बोर्डिंग',
+      contact: '+91-9999999992',
+      images: ['https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww'],
+      availableDates: ['2025-06-01', '2025-06-03', '2025-06-05'],
+      bookedDates: ['2025-06-02', '2025-06-04', '2025-06-06'],
+      createdAt: '2024-01-07'
+    },
+    {
+      _id: '8',
+      name: 'पांचाल धर्मशाला',
+      location: 'मुंडी रोड',
+      contact: '+91-9999999993',
+      images: ['https://plus.unsplash.com/premium_photo-1675745329378-5573c360f69f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8SG90ZWxzfGVufDB8fDB8fHww'],
+      availableDates: ['2025-06-05', '2025-06-10', '2025-06-12'],
+      bookedDates: ['2025-06-06', '2025-06-07', '2025-06-11'],
+      createdAt: '2024-01-08'
+    },
+    {
+      _id: '9',
+      name: 'अष्ट विनायक गार्डन',
+      location: 'शिव सिटी रोड',
+      contact: '+91-9999999994',
+      images: ['https://images.unsplash.com/photo-1590447158019-883d8d5f8bc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D'],
+      availableDates: ['2025-06-15', '2025-06-18', '2025-06-20'],
+      bookedDates: ['2025-06-16', '2025-06-17', '2025-06-19'],
+      createdAt: '2024-01-09'
+    },
+    {
+      _id: '10',
+      name: 'शिवधाम गार्डन',
+      location: 'मुंडी रोड',
+      contact: '+91-9999999995',
+      images: ['https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D'],
+      availableDates: ['2025-06-20', '2025-06-22', '2025-06-25'],
+      bookedDates: ['2025-06-21', '2025-06-23', '2025-06-24'],
+      createdAt: '2024-01-10'
     }
   ]);
 
