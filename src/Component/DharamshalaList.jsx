@@ -233,8 +233,8 @@ const CustomDatePicker = ({ selected, onDateSelect, availableDates, bookedDates 
                     <span>Booked</span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 bg-blue-600 rounded"></div>
-                    <span>Selected</span>
+                    {/* <div className="w-3 h-3 bg-blue-600 rounded"></div> */}
+                    {/* <span>Selected</span> */}
                 </div>
             </div>
         </div>
@@ -359,14 +359,14 @@ const DharamshalaList = () => {
                                         </div>
 
                                         <CustomDatePicker
-                                            selected={selectedDate}
+                                            // selected={selectedDate}
                                             onDateSelect={setSelectedDate}
                                             availableDates={selected.availableDates}
                                             bookedDates={selected.bookedDates}
                                         />
                                     </div>
 
-                                    {selectedDate && (
+                                    {/* {selectedDate && (
                                         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                                             <div className="flex items-center gap-2 text-green-700 mb-2">
                                                 <CheckCircle size={20} />
@@ -382,7 +382,7 @@ const DharamshalaList = () => {
                                                 Confirm Booking
                                             </button>
                                         </div>
-                                    )}
+                                    )} */}
                                 </div>
                             </div>
                         </div>

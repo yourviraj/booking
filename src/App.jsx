@@ -1,6 +1,7 @@
 import React from "react";
 // import Navbar from './Component/Navbar';
 import DharamshalaBooking from "./Component/DharamshalaList";
+import bookingadmin from  "./Component/bookingadmin";
 import LoginPage from "./Component/loginpage";
 import RegisterPage from "./Component/Registration";
 import UploadDharmshala from "./Component/UploadDharmshala";
@@ -9,6 +10,7 @@ import { Route, Routes } from "react-router-dom";
 import Dashboard from "./components/admin/Dashboard";
 import Dharamshala from "./components/admin/Dharamshala";
 import Admins from "./components/admin/Admins";
+
 const App = () => {
   return (
     <Routes>
@@ -20,6 +22,7 @@ const App = () => {
         <Route index element={<Dashboard />} />
         <Route path="dharamshala" element={<Dharamshala />} />
         <Route path="admins" element={<Admins />} />
+        <Route path="bookingadmin" element={<bookingadmin/>}/>
       </Route>
     </Routes>
   );
