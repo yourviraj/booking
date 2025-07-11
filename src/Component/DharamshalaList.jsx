@@ -19,7 +19,7 @@ const dharamshalaData = [
         location: "neem chowke",
         owner: "viraj patwari",
         contact: "+91-9999999992",
-        availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
+        availableDates: ["all date"],
         bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
     },
     {
@@ -39,7 +39,7 @@ const dharamshalaData = [
         location: "भारत सागर पब्लिक स्कूल",
         owner: "viraj patwari",
         contact: "+91-9999999995",
-        availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
+        availableDates: ["all date"],
         bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
     },
     {
