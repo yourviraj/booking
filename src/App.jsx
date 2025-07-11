@@ -1,29 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 // import Navbar from './Component/Navbar';
-import DharamshalaBooking from "./Component/DharamshalaList";
-import AdminBookingPanel from "./Component/AdminBookingPanel";
-import LoginPage from "./Component/loginpage";
-import RegisterPage from "./Component/Registration";
-import UploadDharmshala from "./Component/UploadDharmshala";
-import AdminDashboard from "./components/admin/AdminDashboard";
-import { Route, Routes } from "react-router-dom";
-import Dashboard from "./components/admin/Dashboard";
-import Dharamshala from "./components/admin/Dharamshala";
-import Admins from "./components/admin/Admins";
+import DharamshalaBooking from "./Pages/DharamshalaList";
+import AdminBookingPanel from "./Pages/admin/AdminBookingPanel";
+import AdminDashboard from "./Pages/admin/AdminDashboard";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import Dashboard from "./Pages/admin/Dashboard";
+import Dharamshala from "./Pages/admin/Dharamshala";
+import Admins from "./Pages/admin/Admins";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncloaduser } from "./store/userAction";
+import Loader from "./Components/Loader";
 
 const App = () => {
+  const dispatch = useDispatch();
+  const { page_loading } = useSelector((user) => user.user);
+
+  useEffect(() => {
+    const id = window.localStorage.getItem("id");
+    if (id) {
+      dispatch(asyncloaduser(id));
+    }
+  }, []);
+
+  if (page_loading) {
+    return <Loader />;
+  }
   return (
     <Routes>
-       <Route path="/booking" element={<AdminBookingPanel /> } />
       <Route path="/" element={<DharamshalaBooking />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/upload" element={<UploadDharmshala />} />
       <Route path="/admin" element={<AdminDashboard />}>
         <Route index element={<Dashboard />} />
         <Route path="dharamshala" element={<Dharamshala />} />
         <Route path="admins" element={<Admins />} />
-       
+        <Route path="booking" element={<AdminBookingPanel />} />
       </Route>
     </Routes>
   );

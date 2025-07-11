@@ -4,8 +4,8 @@ const initialState = {
   user: null,
   isLoggedIn: false,
   error: null,
-  role: "admin",
-  page_loading: false,
+  role: "",
+  page_loading: true,
 };
 
 export const userSlice = createSlice({
@@ -32,6 +32,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { loaduser, setpageloading } = userSlice.actions;
+export const { loaduser, setpageloading, logout } = userSlice.actions;
 
 export default userSlice.reducer;

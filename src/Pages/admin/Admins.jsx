@@ -9,6 +9,11 @@ import {
   AlertCircle,
   Shield,
   User,
+  Plus,
+  X,
+  Eye,
+  EyeOff,
+  Lock,
 } from "lucide-react";
 import Axios from "../../Axios";
 
@@ -20,14 +25,22 @@ const Admins = () => {
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState("asc");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formSubmitting, setFormSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    contact: "",
+    email: "",
+    password: "",
+    role: "admin",
+  });
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const { data } = await Axios.get(
-          "/admins"
-        );
+        const { data } = await Axios.get("/admins");
         setUserdata(data);
         setError(null);
       } catch (error) {
@@ -46,7 +59,7 @@ const Admins = () => {
     .filter((user) => {
       const matchesSearch =
         user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user?.contact?.includes(searchTerm);
+        user?.contact.toString()?.includes(searchTerm);
 
       const matchesRole = roleFilter === "all" || user?.role === roleFilter;
 
@@ -109,9 +122,9 @@ const Admins = () => {
   const getRoleIcon = (role) => {
     switch (role) {
       case "admin":
-        return <Shield className="w-4 h-4 text-blue-600" />;
-      case "super_admin":
         return <Shield className="w-4 h-4 text-red-600" />;
+      case "super admin":
+        return <Shield className="w-4 h-4 text-blue-600" />;
       default:
         return <User className="w-4 h-4 text-gray-600" />;
     }
@@ -119,13 +132,60 @@ const Admins = () => {
 
   const getRoleBadge = (role) => {
     switch (role) {
-      case "admin":
+      case "super admin":
         return "bg-blue-100 text-blue-700";
-      case "super_admin":
+      case "admin":
         return "bg-red-100 text-red-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
+  };
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleAddAdmin = async (e) => {
+    e.preventDefault();
+    setFormSubmitting(true);
+
+    try {
+      const response = await Axios.post("/register", formData);
+
+      // Add the new admin to the local state
+      setUserdata([...userdata, response.data]);
+
+      // Reset form and close modal
+      setFormData({
+        name: "",
+        contact: "",
+        email: "",
+        password: "",
+        role: "admin",
+      });
+      setShowAddForm(false);
+
+      // You can add a success toast here
+      alert("Admin added successfully!");
+    } catch (error) {
+      console.error("Error adding admin:", error);
+      alert("Failed to add admin. Please try again.");
+    } finally {
+      setFormSubmitting(false);
+    }
+  };
+
+  const closeModal = () => {
+    setShowAddForm(false);
+    setFormData({
+      name: "",
+      contact: "",
+      email: "",
+      password: "",
+      role: "admin",
+    });
+    setShowPassword(false);
   };
 
   if (loading) {
@@ -133,7 +193,7 @@ const Admins = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600 text-lg">Loading users...</p>
+          <p className="text-gray-600 text-lg">Loading admins...</p>
         </div>
       </div>
     );
@@ -145,7 +205,7 @@ const Admins = () => {
         <div className="text-center bg-white p-8 rounded-xl shadow-lg max-w-md">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Error Loading Users
+            Error Loading admins
           </h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button
@@ -164,11 +224,20 @@ const Admins = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-orange-500 rounded-lg">
-              <UsersIcon className="w-6 h-6 text-white" />
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-orange-500 rounded-lg">
+                <UsersIcon className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-800">All Admins</h1>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800">All Users</h1>
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg transition-colors font-medium"
+            >
+              <Plus className="w-4 h-4" />
+              Add Admin
+            </button>
           </div>
           <p className="text-gray-600">Manage and view all registered users</p>
         </div>
@@ -211,10 +280,10 @@ const Admins = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">
-                  Regular Users
+                  Super Admin Users
                 </p>
                 <p className="text-2xl font-bold text-gray-800">
-                  {userdata.filter((u) => u.role === "user").length}
+                  {userdata.filter((u) => u.role === "super admin").length}
                 </p>
               </div>
               <div className="p-3 bg-orange-100 rounded-lg">
@@ -250,9 +319,8 @@ const Admins = () => {
                     className="border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none"
                   >
                     <option value="all">All Roles</option>
-                    <option value="user">Users</option>
                     <option value="admin">Admins</option>
-                    <option value="super_admin">Super Admins</option>
+                    <option value="super admin">Super Admins</option>
                   </select>
                 </div>
 
@@ -311,6 +379,12 @@ const Admins = () => {
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4" />
                       Contact No.
+                    </div>
+                  </th>
+                  <th className="text-left p-4 font-semibold text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <Lock className="w-4 h-4" />
+                      Password
                     </div>
                   </th>
                   <th
@@ -375,6 +449,14 @@ const Admins = () => {
                       </td>
                       <td className="p-4">
                         <div className="flex items-center gap-2">
+                          <Lock className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">
+                            {user?.password || "Not provided"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
                           {getRoleIcon(user?.role)}
                           <span
                             className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium capitalize ${getRoleBadge(
@@ -415,6 +497,136 @@ const Admins = () => {
           Showing {filteredAndSortedUsers.length} of {userdata.length} users
         </div>
       </div>
+
+      {/* Add Admin Modal */}
+      {showAddForm && (
+        <div className="fixed inset-0 bg-overlay bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Add New Admin
+                </h2>
+                <button
+                  onClick={closeModal}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleAddAdmin} className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Contact Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="contact"
+                    value={formData.contact}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter contact number"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter email address"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Password *
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      value={formData.password}
+                      onChange={handleFormChange}
+                      required
+                      className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                      placeholder="Enter password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="w-5 h-5" />
+                      ) : (
+                        <Eye className="w-5 h-5" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Role *
+                  </label>
+                  <select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleFormChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="super_admin">Super Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={closeModal}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={formSubmitting}
+                  className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white rounded-lg transition-colors font-medium"
+                >
+                  {formSubmitting ? "Adding..." : "Add Admin"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -46,8 +46,7 @@ export default function Sidebar() {
   const handleLogout = async () => {
     if (window.confirm("Are you really want to logout?")) {
       dispatch(asynclogout());
-      document.cookie = "token=";
-      navigate("/admin-login");
+      navigate("/");
     }
   };
 
@@ -57,25 +56,25 @@ export default function Sidebar() {
       icon: LayoutDashboard,
       label: "Dashboard",
       path: "/admin",
-      roles: ["admin"],
+      roles: ["admin", "super admin"],
     },
     {
       icon: Store,
       label: "Dharamshala",
       path: "/admin/dharamshala",
-      roles: ["admin"],
+      roles: ["admin", "super admin"],
     },
     {
       icon: Users,
       label: "Admins",
       path: "/admin/admins",
-      roles: ["admin"],
+      roles: ["super admin"],
     },
     {
       icon: ShoppingCart,
       label: "Booking",
-      path: "/admin/orders",
-      roles: ["admin", "shop"],
+      path: "/admin/booking",
+      roles: ["admin", "super admin"],
     },
     // {
     //   icon: Package,
@@ -109,7 +108,7 @@ export default function Sidebar() {
       {/* Mobile Overlay */}
       {isMobile && isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          className="fixed inset-0 bg-overlay bg-opacity-50 z-40"
           onClick={toggleSidebar}
         />
       )}
@@ -126,7 +125,7 @@ export default function Sidebar() {
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-600">
             <Link
-              to="/home"
+              to="/"
               className={`flex items-center gap-3 transition-opacity duration-300 ${
                 isOpen ? "opacity-100" : "opacity-0 md:opacity-100"
               }`}

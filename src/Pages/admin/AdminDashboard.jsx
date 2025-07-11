@@ -28,10 +28,10 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     if (!page_loading) {
-      if (role === "admin" || role === "shop") {
+      if (role === "admin" || role === "super admin") {
         // User is authorized
       } else {
-        navigate("/admin-login");
+        navigate("/");
       }
     }
   }, [page_loading, role, navigate]);

@@ -1,26 +1,26 @@
-import { loaduser, setpageloading } from "./userSlice";
+import { loaduser, logout, setpageloading } from "./userSlice";
 import Axios from "../Axios";
 
-export const asyncloaduser = () => async (dispatch) => {
+export const asyncloaduser = (id) => async (dispatch) => {
   try {
-    dispatch(setpageloading());
-    const { data } = await Axios.get("/me");
+    dispatch(setpageloading(true));
+    const { data } = await Axios.post("/me", { _id: id });
 
-    if (data.success) {
-      dispatch(loaduser(data.user));
+    if (data) {
+      dispatch(loaduser(data));
     }
   } catch (err) {
     // dispatch(errors(err?.response?.data?.message));
     console.log(err);
+  } finally {
+    dispatch(setpageloading(false));
   }
 };
 
 export const asynclogout = () => async (dispatch) => {
   try {
     dispatch(setpageloading(true));
-    await Axios.get("/logout");
-    window.localStorage.removeItem("location");
-    dispatch(updatelocation(null));
+    window.localStorage.removeItem("id");
     dispatch(logout());
     dispatch(setpageloading(false));
   } catch (err) {
