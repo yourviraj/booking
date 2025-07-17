@@ -33,7 +33,7 @@ const App = () => {
       <Route path="/admin" element={<AdminDashboard />}>
         <Route index element={<Dashboard />} />
         <Route path="dharamshala" element={<Dharamshala />} />
-        <Route path="dharamshala/booking" element={<AdminBookingPanel />} />
+        <Route path="dharamshala/booking/:id" element={<AdminBookingPanel />} />
         <Route path="admins" element={<Admins />} />
       </Route>
     </Routes>

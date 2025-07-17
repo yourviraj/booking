@@ -59,23 +59,23 @@ export default function Sidebar() {
       roles: ["admin", "super admin"],
     },
     {
-      icon: Store,
-      label: "Dharamshala",
-      path: "/admin/dharamshala",
-      roles: ["admin", "super admin"],
-    },
-    {
       icon: Users,
       label: "Admins",
       path: "/admin/admins",
       roles: ["super admin"],
     },
     {
-      icon: ShoppingCart,
-      label: "Booking",
-      path: "/admin/booking",
+      icon: Store,
+      label: "Dharamshala",
+      path: "/admin/dharamshala",
       roles: ["admin", "super admin"],
     },
+    // {
+    //   icon: ShoppingCart,
+    //   label: "Booking",
+    //   path: "/admin/booking",
+    //   roles: ["admin", "super admin"],
+    // },
     // {
     //   icon: Package,
     //   label: "Products",

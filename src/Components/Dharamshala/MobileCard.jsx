@@ -1,15 +1,43 @@
 import { Phone, Trash2, MapPin, Calendar } from "lucide-react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const MobileCard = ({ filteredDharamshalas }) => {
-  const handleDeleteDharamshala = (id) => {
-    setDeleteConfirm(id);
+  const user = useSelector((user) => user.user);
+  const navigate = useNavigate();
+
+  const handleDeleteDharamshala = (e, id) => {
+    e.stopPropagation(); // Prevent the card click event from firing
+
+    // Show confirmation dialog
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this dharamshala? This action cannot be undone."
+    );
+
+    if (confirmed) {
+      // Add your delete logic here
+      console.log("Deleting dharamshala with ID:", id);
+
+      // Example: Call delete API
+      // try {
+      //   await Axios.delete(`/dharamshalas/${id}`);
+      //   // Refresh the list or remove from state
+      //   alert("Dharamshala deleted successfully!");
+      // } catch (error) {
+      //   alert("Failed to delete dharamshala. Please try again.");
+      // }
+    }
   };
+
   return (
     <div className="lg:hidden space-y-4">
       {filteredDharamshalas.map((dharamshala, index) => (
         <div
           key={dharamshala._id}
-          className="bg-white rounded-xl shadow-sm border border-gray-200 p-4"
+          className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 cursor-pointer hover:bg-gray-50 transition-colors duration-150"
+          onClick={() =>
+            navigate(`/admin/dharamshala/booking/${dharamshala._id}`)
+          }
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -29,12 +57,14 @@ const MobileCard = ({ filteredDharamshalas }) => {
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => handleDeleteDharamshala(dharamshala._id)}
-              className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+            {user.role === "super admin" && (
+              <button
+                onClick={(e) => handleDeleteDharamshala(e, dharamshala._id)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            )}
           </div>
 
           <div className="space-y-2">

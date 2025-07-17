@@ -59,7 +59,7 @@ const Admins = () => {
     .filter((user) => {
       const matchesSearch =
         user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user?.contact.toString()?.includes(searchTerm);
+        user?.contact?.toString()?.includes(searchTerm);
 
       const matchesRole = roleFilter === "all" || user?.role === roleFilter;
 

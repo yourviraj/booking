@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Building,
   MapPin,
   Phone,
   UserCheck,
-  Calendar,
-  Trash2,
   Plus,
   Search,
   X,
@@ -16,10 +14,14 @@ import {
 import DesktopTable from "../../Components/Dharamshala/DesktopTable";
 import MobileCard from "../../Components/Dharamshala/MobileCard";
 import Axios from "../../Axios";
+import { useSelector } from "react-redux";
+import imageCompression from 'browser-image-compression';
 
 const DharamshalaManagement = () => {
+  const user = useSelector((user) => user.user);
   const [dharamshalas, setDharamshalas] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [isUpdate, setisUpdate] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
   const [adminSearch, setAdminSearch] = useState("");
@@ -35,41 +37,7 @@ const DharamshalaManagement = () => {
     images: [],
   });
 
-  // Sample data for demonstration
   useEffect(() => {
-    // Sample dharamshalas data
-    const sampleDharamshalas = [
-      {
-        _id: "1",
-        name: "Shri Ram Dharamshala",
-        location: "Varanasi, UP",
-        contact: "+91-9876543210",
-        mapUrl: "https://maps.google.com/sample1",
-        owner: {
-          name: "Rajesh Kumar",
-          email: "rajesh@example.com",
-        },
-        availableDates: ["2024-01-15", "2024-01-16", "2024-01-17"],
-        bookedDates: ["2024-01-18", "2024-01-19"],
-        images: ["/api/placeholder/48/48"],
-      },
-      {
-        _id: "2",
-        name: "Mata Mandir Dharamshala",
-        location: "Haridwar, UK",
-        contact: "+91-9876543211",
-        mapUrl: "https://maps.google.com/sample2",
-        owner: {
-          name: "Priya Sharma",
-          email: "priya@example.com",
-        },
-        availableDates: ["2024-01-20", "2024-01-21"],
-        bookedDates: ["2024-01-22", "2024-01-23", "2024-01-24"],
-        images: ["/api/placeholder/48/48"],
-      },
-    ];
-
-    // Sample admins data
     getDharamshala();
     getAdmins();
   }, []);
@@ -94,9 +62,9 @@ const DharamshalaManagement = () => {
     setAdmins(data);
   };
   const getDharamshala = async () => {
-    const { data } = await Axios.get("/venues");
-    console.log(data);
-
+    const id = window.localStorage.getItem("id");
+    if (!id) return;
+    const { data } = await Axios.get(`/venues?id=${id}`);
     setDharamshalas(data);
   };
 
@@ -141,72 +109,85 @@ const DharamshalaManagement = () => {
       alert("Please enter contact number in format: +91-XXXXXXXXXX");
       return;
     }
-
-    const { data } = await Axios.post("/venues", formData);
-    if (data) {
+    let res;
+    if (isUpdate) {
+      res = await Axios.put("/venues", formData);
+    } else {
+      res = await Axios.post("/venues", formData);
+    }
+    if (res.data) {
       getDharamshala();
     }
     // Reset form
-    // setFormData({
-    //   name: "",
-    //   location: "",
-    //   contact: "",
-    //   mapUrl: "",
-    //   owner: "",
-    //   images: [],
-    // });
+    setFormData({
+      name: "",
+      location: "",
+      contact: "",
+      mapUrl: "",
+      owner: "",
+      images: [],
+    });
     setShowAddModal(false);
 
-    alert("Dharamshala added successfully!");
+    alert("Dharamshala Updated successfully!");
   };
 
   const handleImageUpload = async (event) => {
-    const files = Array.from(event.target.files);
+  const files = Array.from(event.target.files);
 
-    // Check if adding new images would exceed the limit
-    if (formData.images.length + files.length > 10) {
-      alert("You can upload maximum 10 images");
-      return;
-    }
+  // Check if adding new images would exceed the limit
+  if (formData.images.length + files.length > 10) {
+    alert("You can upload a maximum of 10 images");
+    return;
+  }
 
-    setIsUploading(true);
+  setIsUploading(true);
 
-    try {
-      const uploadPromises = files.map(async (file) => {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "dharamshala_preset"); // Replace with your Cloudinary upload preset
-        formData.append("cloud_name", "djpopvpp0"); // Replace with your Cloudinary cloud name
-
-        const response = await fetch(
-          `https://api.cloudinary.com/v1_1/djpopvpp0/image/upload`, // Replace with your cloud name
-          {
-            method: "POST",
-            body: formData,
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Upload failed");
-        }
-
-        const data = await response.json();
-        return data.secure_url;
+  try {
+    const compressedUploads = files.map(async (file) => {
+      // Compress image
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: 1, // Target size (adjust if needed)
+        maxWidthOrHeight: 1920, // Resize if larger
+        useWebWorker: true,
       });
 
-      const uploadedUrls = await Promise.all(uploadPromises);
+      // Prepare upload form
+      const formData = new FormData();
+      formData.append("file", compressedFile);
+      formData.append("upload_preset", "dharamshala_preset");
+      formData.append("cloud_name", "djpopvpp0");
 
-      setFormData((prev) => ({
-        ...prev,
-        images: [...prev.images, ...uploadedUrls],
-      }));
-    } catch (error) {
-      console.error("Error uploading images:", error);
-      alert("Error uploading images. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
-  };
+      // Upload to Cloudinary
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/djpopvpp0/image/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
+
+      const data = await response.json();
+      return data.secure_url;
+    });
+
+    const uploadedUrls = await Promise.all(compressedUploads);
+
+    setFormData((prev) => ({
+      ...prev,
+      images: [...prev.images, ...uploadedUrls],
+    }));
+  } catch (error) {
+    console.error("Error uploading images:", error);
+    alert("Error uploading images. Please try again.");
+  } finally {
+    setIsUploading(false);
+  }
+};
 
   // Remove image from the list
   const removeImage = (indexToRemove) => {
@@ -214,13 +195,6 @@ const DharamshalaManagement = () => {
       ...prev,
       images: prev.images.filter((_, index) => index !== indexToRemove),
     }));
-  };
-
-  const handleDeleteDharamshala = (id) => {
-    if (window.confirm("Are you sure you want to delete this dharamshala?")) {
-      setDharamshalas((prev) => prev.filter((d) => d._id !== id));
-      alert("Dharamshala deleted successfully!");
-    }
   };
 
   return (
@@ -245,13 +219,15 @@ const DharamshalaManagement = () => {
                   {filteredDharamshalas.length} Dharamshalas
                 </span>
               </div>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200"
-              >
-                <Plus className="w-4 h-4" />
-                Add Dharamshala
-              </button>
+              {user.role === "super admin" && (
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200"
+                >
+                  <Plus className="w-4 h-4" />
+                  Add Dharamshala
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -271,7 +247,13 @@ const DharamshalaManagement = () => {
         </div>
 
         {/* Desktop Table View */}
-        <DesktopTable filteredDharamshalas={filteredDharamshalas} />
+        <DesktopTable
+          filteredDharamshalas={filteredDharamshalas}
+          setShowAddModal={setShowAddModal}
+          setFormData={setFormData}
+          setisUpdate={setisUpdate}
+          getDharamshala={getDharamshala}
+        />
 
         {/* Mobile Card View */}
         <MobileCard filteredDharamshalas={filteredDharamshalas} />
@@ -308,7 +290,7 @@ const DharamshalaManagement = () => {
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 className="text-xl font-semibold text-gray-900 flex items-center gap-2">
                   <Plus className="w-6 h-6 text-orange-500" />
-                  Add New Dharamshala
+                  {isUpdate ? "Update Dharamshala" : "Add New Dharamshala"}
                 </h2>
                 <button
                   onClick={() => setShowAddModal(false)}
@@ -568,7 +550,7 @@ const DharamshalaManagement = () => {
                     className="flex items-center gap-2 px-6 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200"
                   >
                     <Plus className="w-4 h-4" />
-                    Add Dharamshala
+                    {isUpdate ? "Update Dharamshala" : "Add Dharamshala"}
                   </button>
                 </div>
               </form>

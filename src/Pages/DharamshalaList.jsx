@@ -14,95 +14,7 @@ import Axios from "../Axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { asyncloaduser } from "../store/userAction";
-
-const dharamshalaData = [
-  {
-    id: 1,
-    name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
-    image:
-      "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "गोपालेशवर महादेव मंदिर",
-    owner: "viraj patwari",
-    contact: "+9111399904",
-    availableDates: ["all date"],
-    bookedDates: [
-      "2026-02-21",
-      "2026-02-22",
-      "2026-02-23",
-      "2026-02-24",
-      "2026-02-25",
-      "2026-02-26",
-      "2026-02-27",
-      "2026-02-28",
-    ],
-  },
-  {
-    id: 2,
-    name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
-    image:
-      "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
-    location: "neem chowke",
-    owner: "viraj patwari",
-    contact: "+91-9999999992",
-    availableDates: ["all date"],
-    bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-  },
-  {
-    id: 3,
-    name: "रूपचितर धर्मशाला",
-    image:
-      "https://images.unsplash.com/photo-1590447158019-883d8d5f8bc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-    location: "बिजलपुर वांडर्स बिजलपुर कब्बडी ग्राउंड",
-    owner: "viraj patwari",
-    contact: "+91-9999999994",
-    availableDates: ["2025-06-15", "2025-06-18", "2025-06-20"],
-    bookedDates: ["2025-06-16", "2025-06-17", "2025-06-19"],
-  },
-  {
-    id: 4,
-    name: "माली धर्मशाला",
-    image:
-      "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-    location: "भारत सागर पब्लिक स्कूल",
-    owner: "viraj patwari",
-    contact: "+91-9999999995",
-    availableDates: ["all date"],
-    bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-  },
-  {
-    id: 5,
-    name: "श्री राम वाटिका",
-    image:
-      "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-    location: "श्री राम दरबार",
-    owner: "viraj patwari",
-    contact: "+91-9999999991",
-    availableDates: ["2025-05-25", "2025-05-28", "2025-05-30", "2025-06-02"],
-    bookedDates: ["2025-05-26", "2025-05-27", "2025-05-29", "2025-06-01"],
-  },
-  {
-    id: 6,
-    name: "मिनी स्कूल गार्डन",
-    image:
-      "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
-    location: "गुरुकुल आकाश बोर्डिंग",
-    owner: "suresh sir",
-    contact: "+91-9999999992",
-    availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
-    bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-  },
-  {
-    id: 7,
-    name: "शिवधाम गार्डन",
-    image:
-      "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-    location: "मुंडी रोड",
-    owner: "Anand Swami",
-    contact: "+91-9999999995",
-    availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
-    bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-  },
-];
+import ImageSlider from "../Components/Booking/ImageSlider";
 
 const CustomDatePicker = ({
   selected,
@@ -441,10 +353,105 @@ const DharamshalaList = () => {
   const [selected, setSelected] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
-
+  const [dharamshalas, setDharamshalas] = useState([]);
+  const dharamshalaData = [
+    {
+      id: 1,
+      name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
+      image:
+        "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      location: "गोपालेशवर महादेव मंदिर",
+      owner: "viraj patwari",
+      contact: "+9111399904",
+      availableDates: ["all date"],
+      bookedDates: [
+        "2026-02-21",
+        "2026-02-22",
+        "2026-02-23",
+        "2026-02-24",
+        "2026-02-25",
+        "2026-02-26",
+        "2026-02-27",
+        "2026-02-28",
+      ],
+    },
+    {
+      id: 2,
+      name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
+      image:
+        "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
+      location: "neem chowke",
+      owner: "viraj patwari",
+      contact: "+91-9999999992",
+      availableDates: ["all date"],
+      bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
+    },
+    {
+      id: 3,
+      name: "रूपचितर धर्मशाला",
+      image:
+        "https://images.unsplash.com/photo-1590447158019-883d8d5f8bc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
+      location: "बिजलपुर वांडर्स बिजलपुर कब्बडी ग्राउंड",
+      owner: "viraj patwari",
+      contact: "+91-9999999994",
+      availableDates: ["2025-06-15", "2025-06-18", "2025-06-20"],
+      bookedDates: ["2025-06-16", "2025-06-17", "2025-06-19"],
+    },
+    {
+      id: 4,
+      name: "माली धर्मशाला",
+      image:
+        "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
+      location: "भारत सागर पब्लिक स्कूल",
+      owner: "viraj patwari",
+      contact: "+91-9999999995",
+      availableDates: ["all date"],
+      bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
+    },
+    {
+      id: 5,
+      name: "श्री राम वाटिका",
+      image:
+        "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      location: "श्री राम दरबार",
+      owner: "viraj patwari",
+      contact: "+91-9999999991",
+      availableDates: ["2025-05-25", "2025-05-28", "2025-05-30", "2025-06-02"],
+      bookedDates: ["2025-05-26", "2025-05-27", "2025-05-29", "2025-06-01"],
+    },
+    {
+      id: 6,
+      name: "मिनी स्कूल गार्डन",
+      image:
+        "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
+      location: "गुरुकुल आकाश बोर्डिंग",
+      owner: "suresh sir",
+      contact: "+91-9999999992",
+      availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
+      bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
+    },
+    {
+      id: 7,
+      name: "शिवधाम गार्डन",
+      image:
+        "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
+      location: "मुंडी रोड",
+      owner: "Anand Swami",
+      contact: "+91-9999999995",
+      availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
+      bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
+    },
+  ];
+  const fetchDharamshala = async () => {
+    const { data } = await Axios.get("/allvenues");
+    setDharamshalas(data);
+  };
   const handleLogin = (userData) => {
     // setUser(userData);
   };
+  useEffect(() => {
+    fetchDharamshala();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-yellow-50">
@@ -475,9 +482,9 @@ const DharamshalaList = () => {
 
       <div className="container mx-auto px-6 py-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {dharamshalaData.map((dharamshala) => (
+          {dharamshalas.map((dharamshala) => (
             <div
-              key={dharamshala.id}
+              key={dharamshala._id}
               className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 overflow-hidden"
               onClick={() => {
                 setSelected(dharamshala);
@@ -486,30 +493,30 @@ const DharamshalaList = () => {
             >
               <div className="relative">
                 <img
-                  src={dharamshala.image}
-                  alt={dharamshala.name}
+                  src={dharamshala?.images[0]}
+                  alt={dharamshala?.name}
                   className="w-full h-48 object-cover"
                 />
                 <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-full text-sm font-semibold text-orange-600">
-                  ⭐ {dharamshala.rating}
+                  ⭐ {dharamshala?.rating}
                 </div>
               </div>
 
               <div className="p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-2">
-                  {dharamshala.name}
+                  {dharamshala?.name}
                 </h2>
                 <div className="flex items-center gap-2 text-gray-600 mb-2">
                   <MapPin size={16} />
-                  <span>{dharamshala.location}</span>
+                  <span>{dharamshala?.location}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600 mb-3">
                   <User size={16} />
-                  <span>{dharamshala.owner}</span>
+                  <span>{dharamshala?.owner?.name}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-2xl font-bold text-orange-600">
-                    {dharamshala.price}
+                    {dharamshala?.price}
                   </span>
                   <button className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors">
                     View Details
@@ -526,11 +533,8 @@ const DharamshalaList = () => {
         <div className="fixed inset-0 bg-overlay bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
             <div className="relative">
-              <img
-                src={selected.image}
-                alt={selected.name}
-                className="w-full h-64 object-cover rounded-t-2xl"
-              />
+              <ImageSlider h={"h-100"} images={selected?.images} />
+
               <button
                 onClick={() => setSelected(null)}
                 className="absolute top-4 right-4 bg-white text-gray-600 hover:text-red-500 p-2 rounded-full shadow-lg transition-colors"
@@ -543,21 +547,21 @@ const DharamshalaList = () => {
               <div className="grid md:grid-cols-2 gap-8">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-800 mb-4">
-                    {selected.name}
+                    {selected?.name}
                   </h2>
 
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center gap-3 text-gray-600">
                       <MapPin className="text-orange-500" size={20} />
-                      <span className="text-lg">{selected.location}</span>
+                      <span className="text-lg">{selected?.location}</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-600">
                       <User className="text-orange-500" size={20} />
-                      <span className="text-lg">{selected.owner}</span>
+                      <span className="text-lg">{selected?.owner.name}</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-600">
                       <Phone className="text-orange-500" size={20} />
-                      <span className="text-lg">{selected.contact}</span>
+                      <span className="text-lg">{selected?.contact}</span>
                     </div>
                   </div>
 
@@ -599,8 +603,8 @@ const DharamshalaList = () => {
 
                     <CustomDatePicker
                       onDateSelect={setSelectedDate}
-                      availableDates={selected.availableDates}
-                      bookedDates={selected.bookedDates}
+                      availableDates={selected?.availableDates}
+                      bookedDates={selected?.bookedDates}
                     />
                   </div>
                 </div>
