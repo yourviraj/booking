@@ -8,7 +8,7 @@ import Dashboard from "./Pages/admin/Dashboard";
 import Dharamshala from "./Pages/admin/Dharamshala";
 import Admins from "./Pages/admin/Admins";
 import { useDispatch, useSelector } from "react-redux";
-import { asyncloaduser } from "./store/userAction";
+import { asyncloaduser, asynclogout } from "./store/userAction";
 import Loader from "./Components/Loader";
 
 const App = () => {
@@ -19,6 +19,8 @@ const App = () => {
     const id = window.localStorage.getItem("id");
     if (id) {
       dispatch(asyncloaduser(id));
+    } else {
+      dispatch(asynclogout());
     }
   }, []);
 
@@ -31,8 +33,8 @@ const App = () => {
       <Route path="/admin" element={<AdminDashboard />}>
         <Route index element={<Dashboard />} />
         <Route path="dharamshala" element={<Dharamshala />} />
+        <Route path="dharamshala/booking" element={<AdminBookingPanel />} />
         <Route path="admins" element={<Admins />} />
-        <Route path="booking" element={<AdminBookingPanel />} />
       </Route>
     </Routes>
   );

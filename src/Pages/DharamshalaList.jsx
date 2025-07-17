@@ -281,8 +281,7 @@ const CustomDatePicker = ({
   );
 };
 const LoginModal = ({ isOpen, onClose, onLogin }) => {
-  const {user}  = useSelector((user) => user.user);
-
+  const { user } = useSelector((user) => user.user);
 
   useEffect(() => {
     if (user) {
@@ -524,7 +523,7 @@ const DharamshalaList = () => {
 
       {/* Enhanced Modal */}
       {selected && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-overlay bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-4xl w-full max-h-screen overflow-y-auto">
             <div className="relative">
               <img
