@@ -48,7 +48,17 @@ const CustomDatePicker = ({
       2,
       "0"
     )}`;
-  const isDateBooked = (dateStr) => bookedDates.includes(dateStr);
+  const isDateBooked = (dateStr) => {
+    return bookedDates.some((entry) => {
+      if (typeof entry === "string") {
+        return entry === dateStr;
+      } else if (typeof entry === "object" && entry.date) {
+        return new Date(entry.date).toISOString().split("T")[0] === dateStr;
+      }
+      return false;
+    });
+  };
+
   const isDateSelected = (dateStr) =>
     selected && selected.toISOString().split("T")[0] === dateStr;
 
@@ -67,6 +77,8 @@ const CustomDatePicker = ({
         currentMonth.getMonth(),
         day
       );
+      console.log(dateStr);
+
       const booked = isDateBooked(dateStr);
       const selectedDay = isDateSelected(dateStr);
 

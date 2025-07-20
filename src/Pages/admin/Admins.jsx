@@ -14,6 +14,8 @@ import {
   Eye,
   EyeOff,
   Lock,
+  Trash2,
+  Edit,
 } from "lucide-react";
 import Axios from "../../Axios";
 
@@ -28,12 +30,23 @@ const Admins = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [formSubmitting, setFormSubmitting] = useState(false);
+  const [deletingUserId, setDeletingUserId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
     email: "",
     password: "",
     role: "admin",
+  });
+
+  // Add these after other state declarations
+  const [showUpdateForm, setShowUpdateForm] = useState(false);
+  const [selectedAdmin, setSelectedAdmin] = useState(null);
+  const [updateFormData, setUpdateFormData] = useState({
+    name: "",
+    contact: "",
+    email: "",
+    role: "",
   });
 
   useEffect(() => {
@@ -186,6 +199,80 @@ const Admins = () => {
       role: "admin",
     });
     setShowPassword(false);
+  };
+  const handleDeleteAdmin = async (adminId) => {
+    if (window.confirm("Are you sure you want to delete this admin?")) {
+      try {
+        setDeletingUserId(adminId);
+        await Axios.delete(`/admins/${adminId}`);
+        // You might want to refresh the data or remove the user from local state here
+        // For example: setUsers(users.filter(user => user._id !== adminId));
+        alert("Admin deleted successfully!");
+      } catch (error) {
+        console.error("Error deleting admin:", error);
+        alert("Failed to delete admin. Please try again.");
+      } finally {
+        setDeletingUserId(null);
+      }
+    }
+  };
+  const handleUpdateAdmin = (admin) => {
+    setSelectedAdmin(admin);
+    setUpdateFormData({
+      name: admin.name,
+      contact: admin.contact,
+      email: admin.email,
+      role: admin.role,
+    });
+    setShowUpdateForm(true);
+  };
+
+  const handleUpdateFormChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateFormData({ ...updateFormData, [name]: value });
+  };
+
+  const handleUpdateSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await Axios.put(
+        `/admins/${selectedAdmin._id}`,
+        updateFormData
+      );
+
+      // Update the local state with the updated admin
+      setUserdata(
+        userdata.map((user) =>
+          user._id === selectedAdmin._id ? response.data : user
+        )
+      );
+
+      // Close modal and reset form
+      setShowUpdateForm(false);
+      setSelectedAdmin(null);
+      setUpdateFormData({
+        name: "",
+        contact: "",
+        email: "",
+        role: "",
+      });
+
+      alert("Admin updated successfully!");
+    } catch (error) {
+      console.error("Error updating admin:", error);
+      alert("Failed to update admin. Please try again.");
+    }
+  };
+
+  const closeUpdateModal = () => {
+    setShowUpdateForm(false);
+    setSelectedAdmin(null);
+    setUpdateFormData({
+      name: "",
+      contact: "",
+      email: "",
+      role: "",
+    });
   };
 
   if (loading) {
@@ -414,6 +501,9 @@ const Admins = () => {
                       )}
                     </div>
                   </th>
+                  <th className="text-left p-4 font-semibold text-gray-700">
+                    Actions
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -474,11 +564,32 @@ const Admins = () => {
                             : "N/A"}
                         </div>
                       </td>
+                      <td className="p-4">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => handleUpdateAdmin(user)}
+                            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+                          >
+                            <Edit className="w-4 h-4" />
+                            Update
+                          </button>
+                          <button
+                            onClick={() => handleDeleteAdmin(user._id)}
+                            disabled={deletingUserId === user._id}
+                            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            {deletingUserId === user._id
+                              ? "Deleting..."
+                              : "Delete"}
+                          </button>
+                        </div>
+                      </td>
                     </tr>
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="5" className="p-8 text-center text-gray-500">
+                    <td colSpan="7" className="p-8 text-center text-gray-500">
                       <UsersIcon className="w-12 h-12 mx-auto mb-3 text-gray-300" />
                       <p className="text-lg font-medium">No users found</p>
                       <p className="text-sm">
@@ -621,6 +732,107 @@ const Admins = () => {
                   className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 disabled:bg-orange-300 text-white rounded-lg transition-colors font-medium"
                 >
                   {formSubmitting ? "Adding..." : "Add Admin"}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Update Admin Modal */}
+      {showUpdateForm && (
+        <div className="fixed inset-0 bg-overlay bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xl font-bold text-gray-800">
+                  Update Admin
+                </h2>
+                <button
+                  onClick={closeUpdateModal}
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+            </div>
+
+            <form onSubmit={handleUpdateSubmit} className="p-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={updateFormData.name}
+                    onChange={handleUpdateFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter full name"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Contact Number *
+                  </label>
+                  <input
+                    type="tel"
+                    name="contact"
+                    value={updateFormData.contact}
+                    onChange={handleUpdateFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter contact number"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email Address *
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={updateFormData.email}
+                    onChange={handleUpdateFormChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                    placeholder="Enter email address"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Role *
+                  </label>
+                  <select
+                    name="role"
+                    value={updateFormData.role}
+                    onChange={handleUpdateFormChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="super admin">Super Admin</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-6">
+                <button
+                  type="button"
+                  onClick={closeUpdateModal}
+                  className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors font-medium"
+                >
+                  Update Admin
                 </button>
               </div>
             </form>
