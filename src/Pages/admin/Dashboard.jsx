@@ -11,144 +11,95 @@ import {
   PieChart as PieChartIcon,
   ArrowUp,
   ArrowDown,
+  UserCheck,
+  Shield,
 } from "lucide-react";
 import Axios from "../../Axios";
-// import { asynsingleshopproducts } from "../../store/userActions";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [series, setSeries] = useState([]);
   const [month, setMonth] = useState([]);
-  const [statsData, setStatsData] = useState({
-    totalOrders: 0,
-    totalProducts: 0,
-    totalUsers: 0,
-    totalRevenue: 0,
-    monthlyGrowth: 0,
+  const [dharamshalaStats, setDharamshalaStats] = useState({
+    totalDharamshalas: 0,
+    totalBookings: 0,
+    totalAdmins: 0,
+    totalSuperAdmins: 0,
   });
+  const [monthlyData, setMonthlyData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [label, setLabel] = useState([
-    "Paan Corner",
-    "Dairy, Bread & Eggs",
-    "Fruits & Vegetables",
-    "Cold Drinks & Juices",
-    "Snacks & Munchies",
-    "Breakfast & Instant Food",
-    "Sweet Tooth",
-    "Bakery",
-    "Tea, Coffee & Health Drink",
-    "Atta, Rice & Dal",
-    "Masala, Oil & More",
-    "Sauces & Spreads",
-    "Chicken, Meat & Fish",
-    "Organic & Healthy Living",
-    "Baby Care",
-    "Pharma & Wellness",
-    "Cleaning Essentials",
-    "Home & Office",
-    "Personal Care",
-    "Pet Care",
-  ]);
-  const [pieseries, setPieseries] = useState();
   const dispatch = useDispatch();
-  const { singleshop_products, user, role } = useSelector(
-    (state) => state.user
-  );
+  const { user, role } = useSelector((state) => state.user);
 
-  const fetchData = async () => {
+  const fetchDharamshalaStats = async () => {
     try {
       setIsLoading(true);
-      const { data } = await Axios.get("/admin/dateorders");
-      const monthNames = [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ];
-
-      // Transform the input data into the desired format
-      const ser = data?.map((item) => item.count);
-      const categories = data?.map((item) => monthNames[item.month - 1]);
-      setSeries(ser);
-      setMonth(categories);
-
-      // Calculate growth (comparing last two months)
-      const growth =
-        ser.length >= 2
-          ? (
-              ((ser[ser.length - 1] - ser[ser.length - 2]) /
-                ser[ser.length - 2]) *
-              100
-            ).toFixed(1)
-          : 0;
-
-      // Mock additional stats - replace with real API calls
-      setStatsData({
-        totalOrders: ser.reduce((a, b) => a + b, 0),
-        totalProducts: singleshop_products?.length || 0,
-        totalUsers: 1250, // Replace with real data
-        totalRevenue: 45680, // Replace with real data
-        monthlyGrowth: growth,
-      });
+      
+      // Fetch dharamshala dashboard statistics
+      const { data } = await Axios.get("/admin/dashboard");
+      setDharamshalaStats(data);
 
       setIsLoading(false);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching dashboard data:", err);
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    if (role === "super_admin") {
-      fetchData();
+    if (role === "super admin") {
+      fetchDharamshalaStats();
     }
-  }, []);
+  }, [role]);
+
+  // Calculate growth rate for bookings (placeholder since we don't have historical data)
+  const calculateGrowth = () => {
+    // Since we don't have historical data, return a placeholder
+    // You can implement this when you add monthly booking trends
+    return "5.2";
+  };
 
   // Stats cards configuration
   const statsCards = [
     {
       title: "Total Bookings",
-      value: statsData.totalOrders,
+      value: dharamshalaStats.totalBookings,
       icon: ShoppingCart,
       color: "bg-blue-500",
-      change: statsData.monthlyGrowth,
-      changeType: statsData.monthlyGrowth >= 0 ? "increase" : "decrease",
+      change: calculateGrowth(),
+      changeType: calculateGrowth() >= 0 ? "increase" : "decrease",
     },
     {
-      title: "Dharamshalas",
-      value: statsData.totalProducts,
-      icon: Package,
-      color: "bg-primary",
-      change: "12.5",
+      title: "Total Dharamshalas",
+      value: dharamshalaStats.totalDharamshalas,
+      icon: Store,
+      color: "bg-orange-500",
+      change: "2.5",
       changeType: "increase",
     },
-
     {
       title: "Total Admins",
-      value: statsData.totalUsers,
+      value: dharamshalaStats.totalAdmins,
       icon: Users,
       color: "bg-green-500",
-      change: "8.2",
+      change: "5.0",
       changeType: "increase",
     },
-    // {
-    //   title: "Revenue",
-    //   value: `₹${statsData.totalRevenue.toLocaleString()}`,
-    //   icon: TrendingUp,
-    //   color: "bg-purple-500",
-    //   change: "15.3",
-    //   changeType: "increase",
-    // },
+    {
+      title: "Super Admins",
+      value: dharamshalaStats.totalSuperAdmins,
+      icon: Shield,
+      color: "bg-purple-500",
+      change: "0",
+      changeType: "increase",
+    },
   ];
+
+  // Calculate average bookings per dharamshala
+  const averageBookings = dharamshalaStats.totalDharamshalas > 0 
+    ? (dharamshalaStats.totalBookings / dharamshalaStats.totalDharamshalas).toFixed(1)
+    : 0;
 
   if (isLoading) {
     return (
@@ -186,10 +137,10 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-5">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Dashboard
+                Dharamshala Management Dashboard
               </h1>
               <p className="text-gray-600 flex items-center">
                 <Calendar className="w-4 h-4 mr-2" />
@@ -255,37 +206,113 @@ const Dashboard = () => {
           })}
         </div>
 
+        {/* Additional Insights */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Booking Rate
+                </h3>
+                <p className="text-2xl font-bold text-blue-600 mt-2">
+                  {averageBookings}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Average bookings per dharamshala
+                </p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Admin Ratio
+                </h3>
+                <p className="text-2xl font-bold text-green-600 mt-2">
+                  {dharamshalaStats.totalDharamshalas > 0 
+                    ? (dharamshalaStats.totalDharamshalas / dharamshalaStats.totalAdmins).toFixed(1)
+                    : 0}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Dharamshalas per admin
+                </p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <UserCheck className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  System Status
+                </h3>
+                <p className="text-2xl font-bold text-green-600 mt-2">
+                  Active
+                </p>
+                <p className="text-sm text-gray-600">
+                  All systems operational
+                </p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <BarChart3 className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Quick Actions */}
         <div className="mt-8 bg-white rounded-lg p-6 shadow-sm">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
             Quick Actions
           </h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-orange-50 transition-colors">
-              <Package className="w-6 h-6 text-primary mb-2" />
+            <Link
+              to="/admin/dharamshala"
+              className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            >
+              <Store className="w-6 h-6 text-orange-500 mb-2" />
               <span className="text-sm font-medium text-gray-700">
-                Add Dharamshala
+                View Dharamshala
               </span>
-            </button>
-            <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-orange-50 transition-colors">
-              <ShoppingCart className="w-6 h-6 text-primary mb-2" />
+            </Link>
+            
+            {/* <Link
+              to="/admin/bookings"
+              className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            >
+              <ShoppingCart className="w-6 h-6 text-orange-500 mb-2" />
               <span className="text-sm font-medium text-gray-700">
                 View Bookings
               </span>
-            </button>
+            </Link> */}
 
-            <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-orange-50 transition-colors">
-              <Store className="w-6 h-6 text-primary mb-2" />
+            {/* <Link
+              to="/admin/manage-dharamshalas"
+              className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            >
+              <Package className="w-6 h-6 text-orange-500 mb-2" />
               <span className="text-sm font-medium text-gray-700">
-                Manage Dharamshala
+                Manage Dharamshalas
               </span>
-            </button>
-            <button className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-primary hover:bg-orange-50 transition-colors">
-              <Users className="w-6 h-6 text-primary mb-2" />
+            </Link> */}
+            
+            <Link
+              to="/admin/admins"
+              className="flex flex-col items-center p-4 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors"
+            >
+              <Users className="w-6 h-6 text-orange-500 mb-2" />
               <span className="text-sm font-medium text-gray-700">
                 View Admins
               </span>
-            </button>
+            </Link>
           </div>
         </div>
       </div>

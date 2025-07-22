@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { asyncloaduser, asynclogout } from "./store/userAction";
 import Loader from "./Components/Loader";
 
+
 const App = () => {
   const dispatch = useDispatch();
   const { page_loading } = useSelector((user) => user.user);
@@ -35,6 +36,7 @@ const App = () => {
         <Route path="dharamshala" element={<Dharamshala />} />
         <Route path="dharamshala/booking/:id" element={<AdminBookingPanel />} />
         <Route path="admins" element={<Admins />} />
+
       </Route>
     </Routes>
   );
