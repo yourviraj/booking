@@ -352,7 +352,7 @@ const Admins = () => {
                 <p className="text-2xl font-bold text-gray-800">
                   {
                     userdata.filter(
-                      (u) => u.role === "admin" || u.role === "super_admin"
+                      (u) => u.role === "admin" || u.role === "super admin"
                     ).length
                   }
                 </p>
@@ -713,7 +713,7 @@ const Admins = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition-colors"
                   >
                     <option value="admin">Admin</option>
-                    <option value="super_admin">Super Admin</option>
+                    <option value="super admin">Super Admin</option>
                   </select>
                 </div>
               </div>
