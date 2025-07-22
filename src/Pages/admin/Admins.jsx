@@ -148,7 +148,7 @@ const Admins = () => {
       case "super admin":
         return "bg-blue-100 text-blue-700";
       case "admin":
-        return "bg-red-100 text-red-700";
+        return "bg-red-100 text-green-700";
       default:
         return "bg-gray-100 text-gray-700";
     }
@@ -339,8 +339,8 @@ const Admins = () => {
                   {userdata.length}
                 </p>
               </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <UserCheck className="w-6 h-6 text-blue-600" />
+              <div className="p-3 bg-gray-100 rounded-lg">
+                <UserCheck className="w-6 h-6 text-gray-600" />
               </div>
             </div>
           </div>
@@ -352,7 +352,7 @@ const Admins = () => {
                 <p className="text-2xl font-bold text-gray-800">
                   {
                     userdata.filter(
-                      (u) => u.role === "admin" || u.role === "super admin"
+                      (u) => u.role === "admin"
                     ).length
                   }
                 </p>
@@ -373,8 +373,8 @@ const Admins = () => {
                   {userdata.filter((u) => u.role === "super admin").length}
                 </p>
               </div>
-              <div className="p-3 bg-orange-100 rounded-lg">
-                <User className="w-6 h-6 text-orange-600" />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Shield className="w-6 h-6 text-blue-700" />
               </div>
             </div>
           </div>

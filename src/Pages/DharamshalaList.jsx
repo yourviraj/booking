@@ -569,7 +569,7 @@ const DharamshalaList = () => {
                     </div>
                     <div className="flex items-center gap-3 text-gray-600">
                       <User className="text-orange-500" size={20} />
-                      {/* <span className="text-lg">{selected?.owner.name}</span> */}
+                      <span className="text-lg">{selected?.owner.name}</span>
                     </div>
                     <div className="flex items-center gap-3 text-gray-600">
                       <Phone className="text-orange-500" size={20} />

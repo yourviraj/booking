@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import emailjs from "emailjs-com"; // EmailJS import
+
 import { useParams } from "react-router-dom";
 import Axios from "../../Axios";
 import ImageSlider from "../../Components/Booking/ImageSlider";
@@ -11,6 +11,8 @@ const AdminBookingPanel = () => {
   const { id } = useParams();
   const [venue, setVenue] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [removalLoading, setRemovalLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedToBook, setSelectedToBook] = useState([]);
   const [selectedToRemove, setSelectedToRemove] = useState([]);
@@ -76,29 +78,15 @@ const AdminBookingPanel = () => {
     }
   };
 
-  const sendEmail = (to, subject, message) => {
-    if (!to) return;
-
-    const templateParams = {
-      to_email: to,
-      subject,
-      message,
-    };
-
-    emailjs
-      .send(
-        "your_service_id", // Replace with your actual service ID
-        "your_template_id", // Replace with your template ID
-        templateParams,
-        "your_user_id" // Replace with your user/public key
-      )
-      .then((res) => console.log("📧 Email sent", res))
-      .catch((err) => console.error("❌ Email failed", err));
-  };
-
   const handleConfirmBooking = async () => {
-    if (!form.name || !form.phone || !form.event) {
-      setError("Please fill all required fields.");
+    // Validate form fields
+    const requiredFields = ["name", "phone", "event"];
+    const missingFields = requiredFields.filter(
+      (field) => !form[field]?.trim()
+    );
+
+    if (missingFields.length > 0) {
+      setError(`Please fill all required fields: ${missingFields.join(", ")}`);
       return;
     }
 
@@ -108,97 +96,136 @@ const AdminBookingPanel = () => {
     }
 
     // Validate phone number format
-    if (!/^\d{10}$/.test(form.phone)) {
+    if (!/^\d{10}$/.test(form.phone.trim())) {
       setError("Please enter a valid 10-digit phone number.");
       return;
     }
 
     // Validate email format if provided
-    if (form.email && !/.+@.+\..+/.test(form.email)) {
+    if (form.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
       setError("Please enter a valid email address.");
       return;
     }
 
     try {
+      setBookingLoading(true);
       const newBookings = selectedToBook.map((date) => ({
         date: date,
-        name: form.name,
-        phone: form.phone,
-        event: form.event,
-        email: form.email || "",
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        event: form.event.trim(),
+        email: form.email?.trim() || "",
       }));
 
       // Send booking request to backend
-
       const { data } = await Axios.post(`/venues/${id}/book`, {
         bookings: newBookings,
       });
 
       // Update local state with the updated venue data
       if (data) {
-        fetchVenue();
+        await fetchVenue(); // Ensure venue data is refreshed
       }
+
+      // Reset form and selections
       setSelectedToBook([]);
       setForm({ name: "", phone: "", event: "", email: "" });
       setError("");
 
-      // Send confirmation email
-      if (form.email) {
-        sendEmail(
-          form.email,
-          "Your Booking is Confirmed",
-          `Dear ${form.name},\n\nYour booking for "${
-            form.event
-          }" on ${selectedToBook.join(", ")} has been confirmed.\n\nThank you!`
-        );
-      }
-
       alert("Booking confirmed successfully!");
     } catch (err) {
-      setError("Failed to confirm booking. Please try again.");
+      const errorMessage =
+        err.response?.data?.message ||
+        "Failed to confirm booking. Please try again.";
+      setError(errorMessage);
       console.error("Error confirming booking:", err);
+    } finally {
+      setBookingLoading(false);
     }
   };
 
   const handleConfirmRemoval = async () => {
-    if (!venue?.bookedDates) return;
+    if (!venue?.bookedDates || selectedToRemove.length === 0) {
+      setError(
+        selectedToRemove.length === 0
+          ? "Please select at least one booking to remove"
+          : "No bookings available to remove"
+      );
+      return;
+    }
 
     try {
+      // Confirm with user before deletion
+      const isConfirmed = window.confirm(
+        `Are you sure you want to remove ${selectedToRemove.length} booking(s)?\n\n` +
+          `Selected dates: ${selectedToRemove.join(", ")}`
+      );
+
+      if (!isConfirmed) return;
+
+      setRemovalLoading(true);
+
       const bookingsToRemove = venue.bookedDates.filter((b) => {
         const bookingDate = new Date(b.date).toISOString().split("T")[0];
         return selectedToRemove.includes(bookingDate);
       });
 
-      // Send cancellation emails before removing
-      // bookingsToRemove.forEach((b) => {
-      //   if (b.email) {
-      //     const bookingDate = new Date(b.date).toISOString().split("T")[0];
-      //     sendEmail(
-      //       b.email,
-      //       "Your Booking is Cancelled",
-      //       `Dear ${b.name},\n\nYour booking on ${bookingDate} for "${b.event}" has been cancelled.`
-      //     );
-      //   }
-      // });
+      // Additional validation - ensure we found matching bookings
+      if (bookingsToRemove.length !== selectedToRemove.length) {
+        const missingDates = selectedToRemove.filter(
+          (date) =>
+            !bookingsToRemove.some(
+              (b) => new Date(b.date).toISOString().split("T")[0] === date
+            )
+        );
+        setError(`Some bookings couldn't be found: ${missingDates.join(", ")}`);
+        return;
+      }
 
       // Send removal request to backend
-      console.log({ dates: selectedToRemove });
-
       const { data } = await Axios.post(`/venues/${id}/remove-book`, {
         dates: selectedToRemove,
+        // Include additional context if needed by backend
+        removedBy: "admin", // or user ID/name
+        timestamp: new Date().toISOString(),
       });
 
       // Update local state
       if (data) {
-        fetchVenue();
+        await fetchVenue(); // Ensure we wait for the refresh
       }
+
+      // Reset selections
       setSelectedToRemove([]);
       setSelectedDetails(null);
+      setError("");
 
-      alert("Booking(s) removed successfully!");
+      // Show success message with details
+      alert(
+        `Successfully removed ${
+          bookingsToRemove.length
+        } booking(s):\n${selectedToRemove.join("\n")}`
+      );
+
+      // Optional: Send notification emails to affected users
     } catch (err) {
-      setError("Failed to remove booking. Please try again.");
+      const errorMessage =
+        err.response?.data?.message ||
+        err.message ||
+        "Failed to remove booking(s). Please try again.";
+      setError(errorMessage);
       console.error("Error removing booking:", err);
+
+      // Optionally show more detailed error in development
+      if (process.env.NODE_ENV === "development") {
+        console.debug("Error details:", {
+          selectedToRemove,
+          venueId: id,
+          error: err.response?.data,
+        });
+      }
+    } finally {
+      setRemovalLoading(false);
     }
   };
 
@@ -397,17 +424,48 @@ const AdminBookingPanel = () => {
       {selectedToBook.length > 0 && (
         <button
           onClick={handleConfirmBooking}
-          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 mb-2"
+          disabled={bookingLoading}
+          className={`w-full py-2 rounded mb-2 text-white transition-colors ${
+            bookingLoading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-blue-600 hover:bg-blue-700'
+          }`}
         >
-          Confirm Booking ({selectedToBook.length})
+          {bookingLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Confirming Booking...
+            </span>
+          ) : (
+            `Confirm Booking (${selectedToBook.length})`
+          )}
         </button>
       )}
+      
       {selectedToRemove.length > 0 && (
         <button
           onClick={handleConfirmRemoval}
-          className="w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700"
+          disabled={removalLoading}
+          className={`w-full py-2 rounded transition-colors text-white ${
+            removalLoading 
+              ? 'bg-gray-400 cursor-not-allowed' 
+              : 'bg-yellow-600 hover:bg-yellow-700'
+          }`}
         >
-          Remove Booking ({selectedToRemove.length})
+          {removalLoading ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Removing Booking...
+            </span>
+          ) : (
+            `Remove Booking (${selectedToRemove.length})`
+          )}
         </button>
       )}
 
