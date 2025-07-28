@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 
-import { useParams } from "react-router-dom";
+import {  useParams } from "react-router-dom";
 import Axios from "../../Axios";
 import ImageSlider from "../../Components/Booking/ImageSlider";
+import InventoryTable from "../../Components/Booking/Inventory";
 
 const formatDate = (y, m, d) =>
   `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
@@ -10,7 +11,9 @@ const formatDate = (y, m, d) =>
 const AdminBookingPanel = () => {
   const { id } = useParams();
   const [venue, setVenue] = useState(null);
+  const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [bookingLoading, setBookingLoading] = useState(false);
   const [removalLoading, setRemovalLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,6 +34,7 @@ const AdminBookingPanel = () => {
       setLoading(true);
       const response = await Axios.get(`/venues/${id}`);
       setVenue(response.data);
+      setInventory(response.data.inventory);
       setError("");
     } catch (err) {
       setError("Failed to fetch venue data");
@@ -308,16 +312,24 @@ const AdminBookingPanel = () => {
     );
   }
 
+
+
+
+
   return (
     <div className="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow mt-6 mb-10">
-      <div className="mb-6 flex flex-col md:flex-row gap-6 items-center  w-1/2">
-        <ImageSlider images={venue.images || []} />
-        <div className="space-y-2 text-gray-700">
-          <h2 className="text-2xl font-bold text-orange-600">{venue.name}</h2>
-          <p>📍 {venue.location}</p>
-          <p>👤 Owner ID: {venue?.owner?.name || venue?.owner}</p>
-          <p>📞 {venue.contact}</p>
+      
+      <div className="md:flex flex-row items-start gap-4">
+        <div className="mb-6 flex flex-col md:flex-row gap-6  w-2/3">
+          <ImageSlider images={venue.images || []} />
+          <div className="space-y-2 text-gray-700">
+            <h2 className="text-2xl font-bold text-orange-600">{venue.name}</h2>
+            <p>📍 {venue.location}</p>
+            <p>👤 Owner ID: {venue?.owner?.name || venue?.owner}</p>
+            <p>📞 {venue.contact}</p>
+          </div>
         </div>
+        
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -390,6 +402,19 @@ const AdminBookingPanel = () => {
         </div>
       </div>
 
+      <div className="flex justify-between text-sm mt-6 text-gray-700">
+        {[
+          ["bg-green-500", "Available"],
+          ["bg-red-500", "Booked"],
+          ["bg-blue-500", "Book"],
+          ["bg-yellow-500", "Remove"],
+        ].map(([color, label]) => (
+          <div key={label} className="flex items-center gap-2">
+            <div className={`w-3 h-3 ${color} rounded`} /> <span>{label}</span>
+          </div>
+        ))}
+      </div>
+
       <div className="space-y-3 my-6">
         {["name", "phone", "event", "email"].map((field) => (
           <div key={field}>
@@ -426,16 +451,31 @@ const AdminBookingPanel = () => {
           onClick={handleConfirmBooking}
           disabled={bookingLoading}
           className={`w-full py-2 rounded mb-2 text-white transition-colors ${
-            bookingLoading 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-blue-600 hover:bg-blue-700'
+            bookingLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
           {bookingLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Confirming Booking...
             </span>
@@ -444,22 +484,37 @@ const AdminBookingPanel = () => {
           )}
         </button>
       )}
-      
+
       {selectedToRemove.length > 0 && (
         <button
           onClick={handleConfirmRemoval}
           disabled={removalLoading}
           className={`w-full py-2 rounded transition-colors text-white ${
-            removalLoading 
-              ? 'bg-gray-400 cursor-not-allowed' 
-              : 'bg-yellow-600 hover:bg-yellow-700'
+            removalLoading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-yellow-600 hover:bg-yellow-700"
           }`}
         >
           {removalLoading ? (
             <span className="flex items-center justify-center gap-2">
-              <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin h-4 w-4 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
               Removing Booking...
             </span>
@@ -478,18 +533,7 @@ const AdminBookingPanel = () => {
         </button>
       </div>
 
-      <div className="flex justify-between text-sm mt-6 text-gray-700">
-        {[
-          ["bg-green-500", "Available"],
-          ["bg-red-500", "Booked"],
-          ["bg-blue-500", "Book"],
-          ["bg-yellow-500", "Remove"],
-        ].map(([color, label]) => (
-          <div key={label} className="flex items-center gap-2">
-            <div className={`w-3 h-3 ${color} rounded`} /> <span>{label}</span>
-          </div>
-        ))}
-      </div>
+      <InventoryTable inventory={inventory} setInventory={setInventory} />
     </div>
   );
 };

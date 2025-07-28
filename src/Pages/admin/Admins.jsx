@@ -350,11 +350,7 @@ const Admins = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Admin Users</p>
                 <p className="text-2xl font-bold text-gray-800">
-                  {
-                    userdata.filter(
-                      (u) => u.role === "admin"
-                    ).length
-                  }
+                  {userdata.filter((u) => u.role === "admin").length}
                 </p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
