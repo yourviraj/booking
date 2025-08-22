@@ -251,9 +251,9 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
         setError(data.message || "Login failed");
       }
     } catch (err) {
-      console.log(err);
+      console.log(err.response.data.message);
 
-      setError("Network error. Please try again.");
+      setError(err.response.data.message);
     } finally {
       setLoading(false);
     }
@@ -366,94 +366,6 @@ const DharamshalaList = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [dharamshalas, setDharamshalas] = useState([]);
-  const dharamshalaData = [
-    {
-      id: 1,
-      name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
-      image:
-        "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      location: "गोपालेशवर महादेव मंदिर",
-      owner: "viraj patwari",
-      contact: "+9111399904",
-      availableDates: ["all date"],
-      bookedDates: [
-        "2026-02-21",
-        "2026-02-22",
-        "2026-02-23",
-        "2026-02-24",
-        "2026-02-25",
-        "2026-02-26",
-        "2026-02-27",
-        "2026-02-28",
-      ],
-    },
-    {
-      id: 2,
-      name: "चंद्रवंशी खाती धर्मशाला बिजलपुर",
-      image:
-        "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
-      location: "neem chowke",
-      owner: "viraj patwari",
-      contact: "+91-9999999992",
-      availableDates: ["all date"],
-      bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-    },
-    {
-      id: 3,
-      name: "रूपचितर धर्मशाला",
-      image:
-        "https://images.unsplash.com/photo-1590447158019-883d8d5f8bc7?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-      location: "बिजलपुर वांडर्स बिजलपुर कब्बडी ग्राउंड",
-      owner: "viraj patwari",
-      contact: "+91-9999999994",
-      availableDates: ["2025-06-15", "2025-06-18", "2025-06-20"],
-      bookedDates: ["2025-06-16", "2025-06-17", "2025-06-19"],
-    },
-    {
-      id: 4,
-      name: "माली धर्मशाला",
-      image:
-        "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-      location: "भारत सागर पब्लिक स्कूल",
-      owner: "viraj patwari",
-      contact: "+91-9999999995",
-      availableDates: ["all date"],
-      bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-    },
-    {
-      id: 5,
-      name: "श्री राम वाटिका",
-      image:
-        "https://plus.unsplash.com/premium_photo-1687960116497-0dc41e1808a2?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      location: "श्री राम दरबार",
-      owner: "viraj patwari",
-      contact: "+91-9999999991",
-      availableDates: ["2025-05-25", "2025-05-28", "2025-05-30", "2025-06-02"],
-      bookedDates: ["2025-05-26", "2025-05-27", "2025-05-29", "2025-06-01"],
-    },
-    {
-      id: 6,
-      name: "मिनी स्कूल गार्डन",
-      image:
-        "https://images.unsplash.com/photo-1596386461350-326ccb383e9f?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8SG90ZWxzfGVufDB8fDB8fHww",
-      location: "गुरुकुल आकाश बोर्डिंग",
-      owner: "suresh sir",
-      contact: "+91-9999999992",
-      availableDates: ["2025-06-01", "2025-06-03", "2025-06-05"],
-      bookedDates: ["2025-06-02", "2025-06-04", "2025-06-06"],
-    },
-    {
-      id: 7,
-      name: "शिवधाम गार्डन",
-      image:
-        "https://images.unsplash.com/photo-1495365200479-c4ed1d35e1aa?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fEhvdGVsc3xlbnwwfHwwfHx8MA%3D%3D",
-      location: "मुंडी रोड",
-      owner: "Anand Swami",
-      contact: "+91-9999999995",
-      availableDates: ["2025-06-20", "2025-06-22", "2025-06-25"],
-      bookedDates: ["2025-06-21", "2025-06-23", "2025-06-24"],
-    },
-  ];
   const fetchDharamshala = async () => {
     const { data } = await Axios.get("/allvenues");
     setDharamshalas(data);
